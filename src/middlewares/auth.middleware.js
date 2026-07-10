@@ -1,24 +1,23 @@
 import jwt from "jsonwebtoken";
 
-export const authenticateToken = (req, res, next) => {
+export const auth = (req, res, next) => {
   const authorizationHeader = req.headers.authorization;
-  const jwtSecret = process.env.JWT_SECRET ?? "change_this_secret";
 
   if (!authorizationHeader) {
-    return res.status(401).json({ message: "Token no proporcionado" });
+    return res.status(401).json({ message: "Token no enviado" });
   }
 
-  const [scheme, token] = authorizationHeader.split(" ");
+  const token = authorizationHeader.split(" ")[1];
 
-  if (scheme !== "Bearer" || !token) {
-    return res.status(401).json({ message: "Formato de token inválido" });
+  if (!token) {
+    return res.status(401).json({ message: "Formato de token invalido" });
   }
 
   try {
-    const payload = jwt.verify(token, jwtSecret);
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
     req.user = payload;
-    return next();
+    next();
   } catch (error) {
-    return res.status(403).json({ message: "Token inválido o expirado" });
+    return res.status(403).json({ message: "Token invalido o expirado" });
   }
 };

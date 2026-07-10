@@ -5,13 +5,13 @@ import {
   createProduct,
   deleteProduct,
 } from "../controllers/products.controller.js";
-import { authenticateToken } from "../middlewares/auth.middleware.js";
+import { auth } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
 // prefijo:  /api/products
 
-router.use(authenticateToken);
+router.use(auth);
 
 router.get("/", getAllProducts);
 
